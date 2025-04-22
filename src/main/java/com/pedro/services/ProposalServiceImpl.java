@@ -1,11 +1,13 @@
 package com.pedro.services;
 
+import com.pedro.dto.ProposalDTO;
 import com.pedro.dto.ProposalDetailsDTO;
 import com.pedro.entities.ProposalEntity;
 import com.pedro.messages.KafkaEvent;
 import com.pedro.repositories.ProposalRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class ProposalServiceImpl implements ProposalService {
@@ -34,11 +36,24 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void createNewProposal(ProposalDetailsDTO proposalDetailsDTO) {
 
+        ProposalDTO proposal = buildAndSaveNewProposal(proposalDetailsDTO);
+        kafkaMessages.sendKafkaEvent(proposal);
+
     }
 
     @Override
     public void removeProposal(Long id) {
 
+    }
+
+    @Transactional
+    private ProposalDTO buildAndSaveNewProposal(ProposalDetailsDTO proposalDetailsDTO) {
+
+        try{
+
+        }catch (Exception e){
+
+        }
     }
 
 }
