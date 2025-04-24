@@ -9,6 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.Date;
+
 @ApplicationScoped
 public class ProposalServiceImpl implements ProposalService {
 
@@ -43,7 +45,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public void removeProposal(Long id) {
-
+        proposalRepository.deleteById(id);
     }
 
     @Transactional
@@ -51,9 +53,27 @@ public class ProposalServiceImpl implements ProposalService {
 
         try{
 
+            ProposalEntity proposal = new ProposalEntity();
+
+            proposal.setCreated(new Date());
+            proposal.setProposalValidityDays(proposalDetailsDTO.getProposalValidityDays());
+            proposal.setCountry(proposalDetailsDTO.getCountry());
+            proposal.setCustomer(proposalDetailsDTO.getCustomer());
+            proposal.setPriceTonne(proposalDetailsDTO.getPriceTonne());
+            proposal.setTonnes(proposalDetailsDTO.getTonnes());
+
+            proposalRepository.persist(proposal);
+
+            return ProposalDTO.builder()
+                    .proposalId(proposalRepository.findByCustomer(proposal.getCustomer()).get().getId())
+                    .priceTonne(proposal.getPriceTonne())
+                    .customer(proposal.getCustomer())
+                    .build();
+
         }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
 
         }
     }
-
 }
